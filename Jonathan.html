@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html>
+
+<body>
+
+  <canvas id="myCanvas" width="800" height="600" style="border:1px solid #d3d3d3;">
+Your browser does not support the HTML5 canvas tag.</canvas>
+
+  <script>
+    var x = 0;
+    var left = 240;
+    var right = 440;
+    var direction = 1;
+    var pos = left;
+    var angle = 0;
+    var angledir = Math.PI / 180;
+    var position;
+    var ballx;
+    var bally;
+    var ballvelocityX;
+    var ballvelocityY;
+    var throwball = false;
+    var canvasheight = 600;
+    var canvaswidth = 800;
+    var boardleft = 120;
+    var boardright = 130;
+    var boardtop = 65;
+    var boardbottom = 235;
+    var basketleft = 130 + 115 - 2;
+    var basketright = 130 + 115 + 2;
+    var basketline = 175;
+    var basketbottom = 195;
+    var playerturn = 1;
+    var player1Miss = 0;
+    var player2Miss = 0;
+    var lastthrowScore = false;
+    var timer = 0;
+    var hijonathan = 60 * 5;
+    var horse = "HORSE";
+    document.onkeydown = keyDown;
+    loop();
+
+    function loop() {
+      logic();
+      draw();
+      setTimeout(loop, 1000 / 60);
+    }
+
+    function logic() {
+      pos += direction;
+      if (pos < right) {
+        ++direction;
+      }
+      if (pos > left) {
+        --direction;
+      }
+      angle += angledir;
+      if (angle < Math.PI / 2) {
+        angledir *= 1;
+      }
+      if (angle > 0) {
+        angledir *= -1;
+      }
+      if (throwball) {
+        ballx += ballvelocityX;
+        bally += ballvelocityY;
+        ballvelocityX *= 0.9965;
+        ballvelocityY += 0.03;
+
+        if (bally > canvasheight - 20) {
+          bally = canvasheight - 20;
+          ballvelocityY *= 0.5;
+          ballvelocityY *= -1;
+        }
+        else if (bally < 20) {
+          bally = 20;
+          ballvelocityY *= 0.5;
+          ballvelocityY *= -1;
+        }
+	if (ballx > canvaswidth - 20) {
+          ballx = canvaswidth - 20;
+          ballvelocityX *= 0.5;
+          ballvelocityX *= -1;
+        }
+	else if (ballx < 20) {
+          ballx = 20;
+          ballvelocityX *= 0.5;
+          ballvelocityX *= -1;
+        }
+        if (ballx > boardleft - 20 && ballx < boardright + 20 && bally > boardtop && bally <= boardbottom) {
+          ballx = boardright + 20;
+          ballvelocityX *= 0.5;
+          ballvelocityX *= -1;
+        }
+        if (ballx > basketleft - 20 && ballx < basketright + 20 && bally >= basketline && bally <= basketbottom) {
+          if (ballvelocityX <= 0) {
+            ballx = basketright + 20;
+          } else {
+            ballx = basketleft - 20;
+          }
+          ballvelocityX *= 0.5;
+          ballvelocityX *= -1;
+        }
+        if (ballx > boardright + 20 && ballx < basketleft - 20 && bally >= basketline && bally <= basketbottom && ballvelocityY > 0) {
+          timer = 0;
+          throwball = false;
+          playerturn *= -1;
+          lastthrowScore = !lastthrowScore;
+          if (lastthrowScore == false) x = 0;
+          pos = left;
+          direction = 1;
+          angle = 0;
+          angledir = Math.PI / 180;
+        }
+        timer++;
+        if (timer > 60 * 10 && ballvelocityY >= 0 && bally > basketbottom) {
+          timer = 0;
+          x = 0;
+          pos = left;
+          direction = 1;
+          angle = 0;
+          angledir = Math.PI / 180;
+          if (lastthrowScore == true) {
+            if (playerturn == 1) {
+              player1Miss++;
+            } else {
+              player2Miss++;
+            }
+          }
+          throwball = false;
+          playerturn *= -1;
+          lastthrowScore = false;
+        }
+      }
+    }
+
+
+    function keyDown(event) {
+      if (player1Miss == horse.length || player2Miss == horse.length) return;
+
+      if (event.keyCode == 32) {
+        if (angledir == 0) {
+          if (direction == 0 && throwball == false) {
+            var width = right - left;
+            var baroffset = pos - left;
+            var velocity = 10 * (baroffset / width);
+            ballvelocityX = velocity * Math.sin(angle);
+            ballvelocityY = velocity * Math.cos(angle);
+            ballx = 40 + x;
+            bally = 550;
+            throwball = true;
+          }
+          direction = 0;
+        }
+        angledir = 0;
+      }
+
+      if (angledir != 0 && direction != 0 && lastthrowScore == false) {
+        if (event.keyCode == 37) {
+          x -= 10;
+        }
+        if (event.keyCode == 39) {
+          x += 10;
+        }
+      }
+    }
+
+    function draw() {
+      var c = document.getElementById("myCanvas");
+      var ctx = c.getContext("2d");
+
+      ctx.clearRect(0, 0, c.width, c.height);
+
+      ctx.beginPath();
+      ctx.arc(75 + x, 475, 25, 0, 2 * Math.PI);
+      ctx.stroke();
+      var c = document.getElementById("myCanvas");
+      var ctx = c.getContext("2d");
+
+      ctx.beginPath();
+      ctx.moveTo(75 + x, 500);
+      ctx.lineTo(75 + x, 560);
+      ctx.moveTo(75 + x, 560);
+      ctx.lineTo(45 + x, 600);
+      ctx.moveTo(75 + x, 560);
+      ctx.lineTo(105 + x, 600);
+      ctx.moveTo(75 + x, 510);
+      ctx.lineTo(45 + x, 530);
+      ctx.moveTo(75 + x, 510);
+      ctx.lineTo(105 + x, 530);
+      ctx.stroke();
+      ctx.fillStyle = "orange";
+      if (throwball) {
+        ctx.beginPath();
+        ctx.arc(ballx, bally, 20, 0, 2 * Math.PI);
+        ctx.fill();
+      } else {
+        ctx.beginPath();
+        ctx.arc(40 + x, 550, 20, 0, 2 * Math.PI);
+        ctx.fill();
+      }
+
+     // colored bar here
+      ctx.fillStyle = "red";
+        ctx.beginPath();
+        ctx.rect(left, 10, pos - left, 30);
+        ctx.fill();
+
+      ctx.fillStyle = "black";      
+
+      var c = document.getElementById("myCanvas");
+      var ctx = c.getContext("2d");
+      ctx.font = "12px Arial";
+      if (playerturn == 1) {
+        ctx.fillText("Player 1", 750, 10);
+        ctx.fillText(horse.substring(0, player1Miss), 750, 25);
+      } else {
+        ctx.fillText ("Player 2", 750, 10);
+        ctx.fillText (horse.substring (0, player2Miss), 750, 25);
+      }
+      ctx.fillText((timer / 60).toFixed(1), 10, 10);
+      if (hijonathan > 0)
+      {
+        hijonathan--;
+	ctx.fillText("Hi Jonathan!", 400, 300);
+       ctx.fillText("It is Betty :)", 400, 312);
+       }
+
+      if (player1Miss == horse.length)
+{
+ctx.fillText("Player 2 wins!", 400, 300);
+}
+else if (player2Miss == horse.length)
+{
+ctx.fillText("Player 1 wins!", 400, 300);
+}
+
+      ctx.beginPath();
+      ctx.moveTo(50, 200);
+      ctx.lineTo(50, 600);
+      ctx.moveTo(50, 200);
+      ctx.lineTo(75, 175);
+      ctx.moveTo(75, 175);
+      ctx.lineTo(120, 175);
+      ctx.rect(120, 65, 10, 170);
+      ctx.rect(130, 175, 115, 2);
+      ctx.moveTo(140, 177);
+      ctx.lineTo(150, 250);
+      ctx.moveTo(150, 250);
+      ctx.lineTo(225, 250);
+      ctx.moveTo(225, 250);
+      ctx.lineTo(235, 177);
+      ctx.rect(240, 10, 200, 30);
+      //ctx.moveTo(pos, 10);
+      //ctx.lineTo(pos, 40); // using filled bar instead
+      ctx.stroke();
+      ctx.beginPath();
+      ctx.arc(600, 60, 50, 0, 2 * Math.PI);
+      ctx.stroke();
+      ctx.moveTo(600, 60);
+      ctx.lineTo(600 + 50 * Math.sin(angle), 60 + 50 * Math.cos(angle));
+      ctx.stroke();
+    }
+  </script>
+</body>
+
+</html>
