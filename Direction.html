@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+<body>
+
+<canvas id="myCanvas" width="800" height="110" style="border:1px solid #d3d3d3;">
+
+<script>
+
+var c = document.getElementById("myCanvas");
+var ctx = c.getContext("2d");
+
+ctx.font = "14px Georgia";
+ctx.fillText("Game Direction", 350, 10);
+ctx.font = "12px Georgia";
+ctx.fillText ("For each term, the player can move himself to the position he wants to shoot the ball by pressing left and right keys. And he will choose the direction", 0,22)
+ctx.fillText(" he wants to shoot the basketball when he presses the space bar for the first time. The direction is shown in the circle at the top of the screen. After the",0,34)
+ctx.fillText("direction is set, the player cannot move himself anymore. If he presses the space bar for the second time, the power of the ball would be set. The power",0,46)
+ctx.fillText ("is shown in the rectangle bar at the top of the screen. When the third time the player presses the space bar, the ball will be thrown according to the",0,58)
+ctx.fillText("direction and the power. If the first player makes the basket, the second player cannot choose the position and he needs to make the basket by choosing", 0,70)
+ctx.fillText( "the new direction and the new power. If the second player makes the basket too, a new round will start and nobody gets letter from HORSE. But if the",0,82)
+ctx.fillText ("second player does not make the basket, he will get a letter H from HORSE Each time the second player does not make the basket after the first player",0,94)
+ctx.fillText("makes it, he will get a new letter. The one who gets all five letters in HORSE will lose the game. ", 0, 106)
+</script>
+</body>
+</html>
